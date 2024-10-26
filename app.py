@@ -42,8 +42,10 @@ def preprocess_canvas(canvas):
     pixel_array = pg.surfarray.array3d(canvas)
 
     array = np.dot(pixel_array[..., :3], [0.2989, 0.5870, 0.1140]).astype(np.uint8)
-    #array = 254 - array
-    #array = array.astype(np.float64)
+    array = 254 - array
+    array = array.astype(np.float64) / 255.0
+    array = array.flatten()
+
     return array
 
 
@@ -78,7 +80,7 @@ def main():
                     pos_x = (event.pos[0] - SCREEN_HALF_WIDTH) * CANVAS_WIDTH_SCALE
                     pos_y = event.pos[1] * CANVAS_HEIGHT_SCALE
 
-                    pg.draw.line(canvas, BLACK, drawing, (pos_x, pos_y), 2)
+                    pg.draw.line(canvas, BLACK, drawing, (pos_x, pos_y), 1)
                     drawing = (pos_x, pos_y)
             
             if event.type == pg.MOUSEBUTTONUP:
@@ -86,14 +88,14 @@ def main():
                     drawing = None
                 
                 if event.button == RIGHT_MOUSE_BUTTON:
+                    print(knn.predict([preprocess_canvas(canvas)])[0])
                     canvas.fill(WHITE)
-                    preprocess_canvas(canvas)
 
 
         # Draw section
         screen.fill(BLACK)
-        pg.transform.scale(canvas, (SCREEN_WIDTH / 2, SCREEN_HEIGHT), scaled_canvas)
-        screen.blit(scaled_canvas, (SCREEN_WIDTH / 2, 0))
+        pg.transform.scale(canvas, (SCREEN_HALF_WIDTH, SCREEN_HEIGHT), scaled_canvas)
+        screen.blit(scaled_canvas, (SCREEN_HALF_WIDTH, 0))
         pg.display.flip()
 
     pg.quit()
