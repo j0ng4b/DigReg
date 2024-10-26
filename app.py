@@ -7,9 +7,14 @@ from knn import KNN
 SCREEN_TITLE = 'DigReg'
 
 SCREEN_WIDTH = 480
+SCREEN_HALF_WIDTH = SCREEN_WIDTH // 2
 SCREEN_HEIGHT = 320
-
+SCREEN_HALF_HEIGHT = SCREEN_HEIGHT // 2
 SCREEN_FRAME_RATE = 60
+
+CANVAS_SIZE = 28
+CANVAS_WIDTH_SCALE = CANVAS_SIZE / SCREEN_HALF_WIDTH
+CANVAS_HEIGHT_SCALE = CANVAS_SIZE / SCREEN_HEIGHT
 
 LEFT_MOUSE_BUTTON = 1
 MIDDLE_MOUSE_BUTTON = 2
@@ -51,7 +56,8 @@ def main():
     screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
     drawing = None
-    canvas = pg.surface.Surface((SCREEN_WIDTH / 2, SCREEN_HEIGHT))
+    canvas = pg.surface.Surface((CANVAS_SIZE, CANVAS_SIZE))
+    scaled_canvas = pg.surface.Surface((SCREEN_HALF_WIDTH, SCREEN_HEIGHT))
     canvas.fill(WHITE)
 
     running = True
@@ -62,13 +68,18 @@ def main():
 
             if event.type == pg.MOUSEBUTTONDOWN:
                 if event.button == LEFT_MOUSE_BUTTON:
-                    drawing = (event.pos[0] - (SCREEN_WIDTH / 2), event.pos[1])
+                    pos_x = (event.pos[0] - SCREEN_HALF_WIDTH) * CANVAS_WIDTH_SCALE
+                    pos_y = event.pos[1] * CANVAS_HEIGHT_SCALE
+
+                    drawing = (pos_x, pos_y)
             
             if event.type == pg.MOUSEMOTION:
                 if drawing is not None:
-                    current_pos = (event.pos[0] - (SCREEN_WIDTH / 2), event.pos[1])
-                    pg.draw.line(canvas, BLACK, drawing, current_pos, 5)
-                    drawing = current_pos
+                    pos_x = (event.pos[0] - SCREEN_HALF_WIDTH) * CANVAS_WIDTH_SCALE
+                    pos_y = event.pos[1] * CANVAS_HEIGHT_SCALE
+
+                    pg.draw.line(canvas, BLACK, drawing, (pos_x, pos_y), 2)
+                    drawing = (pos_x, pos_y)
             
             if event.type == pg.MOUSEBUTTONUP:
                 if event.button == LEFT_MOUSE_BUTTON:
@@ -81,7 +92,8 @@ def main():
 
         # Draw section
         screen.fill(BLACK)
-        screen.blit(canvas, (SCREEN_WIDTH / 2, 0))
+        pg.transform.scale(canvas, (SCREEN_WIDTH / 2, SCREEN_HEIGHT), scaled_canvas)
+        screen.blit(scaled_canvas, (SCREEN_WIDTH / 2, 0))
         pg.display.flip()
 
     pg.quit()
