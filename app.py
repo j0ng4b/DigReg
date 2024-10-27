@@ -79,6 +79,7 @@ def main():
     font = pg.font.Font(None, 42)
     text_predicting = font.render('Predicting...', True, WHITE)
     text_result = font.render('You draw', True, WHITE)
+    font_number = pg.font.Font(None, 120)
 
     prediction_state = PREDICTION_NO_STATE
     prediction_result = queue.Queue()
@@ -120,7 +121,7 @@ def main():
 
         if not prediction_result.empty():
             prediction_state = PREDICTION_DONE
-            print(prediction_result.get())
+            prediction_value = prediction_result.get()
 
         if prediction_state == PREDICTION_STARTED:
             threading.Thread(target=predict, args=(canvas, knn, prediction_result)).start()
@@ -138,10 +139,14 @@ def main():
             screen.blit(text_predicting, text_rect)
 
         if prediction_state == PREDICTION_DONE:
-            text_rect = text_result.get_rect()
-            text_rect.center = (SCREEN_HALF_WIDTH // 2, 0)
-            text_rect.y = 10
-            screen.blit(text_result, text_rect)
+            text_draw_rect = text_result.get_rect()
+            text_draw_rect.center = (SCREEN_HALF_WIDTH // 2, SCREEN_HALF_HEIGHT - 40)
+            screen.blit(text_result, text_draw_rect)
+
+            text_number = font_number.render(f'{prediction_value}', True, WHITE)
+            text_number_rect = text_number.get_rect()
+            text_number_rect.center = (SCREEN_HALF_WIDTH // 2, SCREEN_HALF_HEIGHT + 40)
+            screen.blit(text_number, text_number_rect)
 
         pg.display.flip()
 
