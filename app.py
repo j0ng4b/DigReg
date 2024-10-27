@@ -1,3 +1,5 @@
+import queue
+import threading
 import pygame as pg
 import numpy as np
 
@@ -23,6 +25,7 @@ RIGHT_MOUSE_BUTTON = 3
 PREDICTION_NO_STATE = 0
 PREDICTION_STARTED = 1
 PREDICTION_DONE = 2
+PREDICTION_IN_PROGRESS = 3
 
 # Colors
 WHITE = (255, 255, 255)
@@ -55,6 +58,11 @@ def preprocess_canvas(canvas):
     return array
 
 
+def predict(canvas, knn, queue):
+    queue.put(knn.predict([preprocess_canvas(canvas)])[0])
+    canvas.fill(WHITE)
+
+
 def main():
     knn = KNN(10)
     knn.fit(*load_mnist('mnist/train-images-idx3-ubyte', 'mnist/train-labels-idx1-ubyte'))
@@ -73,6 +81,7 @@ def main():
     text_result = font.render('You draw', True, WHITE)
 
     prediction_state = PREDICTION_NO_STATE
+    prediction_result = queue.Queue()
 
     running = True
     while running:
@@ -109,11 +118,13 @@ def main():
                 if event.key == pg.K_RETURN:
                     prediction_state = PREDICTION_STARTED
 
+        if not prediction_result.empty():
+            prediction_state = PREDICTION_DONE
+            print(prediction_result.get())
+
         if prediction_state == PREDICTION_STARTED:
-            knn.predict([preprocess_canvas(canvas)])[0]
-            canvas.fill(WHITE)
-        elif prediction_state == PREDICTION_DONE:
-            pass
+            threading.Thread(target=predict, args=(canvas, knn, prediction_result)).start()
+            prediction_state = PREDICTION_IN_PROGRESS
 
         # Draw section
         screen.fill(BLACK)
@@ -121,7 +132,7 @@ def main():
         pg.transform.scale(canvas, (SCREEN_HALF_WIDTH, SCREEN_HEIGHT), scaled_canvas)
         screen.blit(scaled_canvas, (SCREEN_HALF_WIDTH, 0))
 
-        if prediction_state == PREDICTION_STARTED:
+        if prediction_state == PREDICTION_STARTED or prediction_state == PREDICTION_IN_PROGRESS:
             text_rect = text_predicting.get_rect()
             text_rect.center = (SCREEN_HALF_WIDTH // 2, SCREEN_HALF_HEIGHT)
             screen.blit(text_predicting, text_rect)
