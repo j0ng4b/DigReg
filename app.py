@@ -30,12 +30,12 @@ def load_mnist(images_path, labels_path):
         # Skip the magic number, number of images, number of rows and columns
         f.read(16)
         images = np.frombuffer(f.read(), np.uint8).reshape(-1, 28, 28) / 255.0
-    
+
     with open(labels_path, 'rb') as f:
         # Skip the magic number and number of labels
         f.read(8)
         labels = np.frombuffer(f.read(), np.uint8)
-    
+
     return images.reshape(images.shape[0], -1), labels
 
 def preprocess_canvas(canvas):
@@ -74,19 +74,19 @@ def main():
                     pos_y = event.pos[1] * CANVAS_HEIGHT_SCALE
 
                     drawing = (pos_x, pos_y)
-            
+
             if event.type == pg.MOUSEMOTION:
                 if drawing is not None:
                     pos_x = (event.pos[0] - SCREEN_HALF_WIDTH) * CANVAS_WIDTH_SCALE
                     pos_y = event.pos[1] * CANVAS_HEIGHT_SCALE
 
-                    pg.draw.line(canvas, BLACK, drawing, (pos_x, pos_y), 1)
+                    pg.draw.line(canvas, BLACK, drawing, (pos_x, pos_y), 2)
                     drawing = (pos_x, pos_y)
-            
+
             if event.type == pg.MOUSEBUTTONUP:
                 if event.button == LEFT_MOUSE_BUTTON:
                     drawing = None
-                
+
                 if event.button == RIGHT_MOUSE_BUTTON:
                     print(knn.predict([preprocess_canvas(canvas)])[0])
                     canvas.fill(WHITE)
