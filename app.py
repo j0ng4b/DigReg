@@ -20,6 +20,10 @@ LEFT_MOUSE_BUTTON = 1
 MIDDLE_MOUSE_BUTTON = 2
 RIGHT_MOUSE_BUTTON = 3
 
+PREDICTION_NO_STATE = 0
+PREDICTION_STARTED = 1
+PREDICTION_DONE = 2
+
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -64,6 +68,8 @@ def main():
     scaled_canvas = pg.surface.Surface((SCREEN_HALF_WIDTH, SCREEN_HEIGHT))
     canvas.fill(WHITE)
 
+    prediction_state = PREDICTION_NO_STATE
+
     running = True
     while running:
         # Event handler section
@@ -76,6 +82,7 @@ def main():
                     pos_y = event.pos[1] * CANVAS_HEIGHT_SCALE
 
                     drawing = (pos_x, pos_y)
+                    prediction_state = PREDICTION_NO_STATE
 
             if event.type == pg.MOUSEMOTION:
                 if drawing is not None:
@@ -84,25 +91,32 @@ def main():
 
                     pg.draw.line(canvas, BLACK, drawing, (pos_x, pos_y), 2)
                     drawing = (pos_x, pos_y)
+                    prediction_state = PREDICTION_NO_STATE
 
             if event.type == pg.MOUSEBUTTONUP:
                 if event.button == LEFT_MOUSE_BUTTON:
                     drawing = None
+                    prediction_state = PREDICTION_NO_STATE
 
                 if event.button == RIGHT_MOUSE_BUTTON:
-                    print(knn.predict([preprocess_canvas(canvas)])[0])
-                    canvas.fill(WHITE)
+                    prediction_state = PREDICTION_STARTED
 
             if event.type == pg.KEYUP:
                 if event.key == pg.K_RETURN:
-                    print(knn.predict([preprocess_canvas(canvas)])[0])
-                    canvas.fill(WHITE)
+                    prediction_state = PREDICTION_STARTED
 
+        if prediction_state == PREDICTION_STARTED:
+            knn.predict([preprocess_canvas(canvas)])[0]
+            canvas.fill(WHITE)
+        elif prediction_state == PREDICTION_DONE:
+            pass
 
         # Draw section
         screen.fill(BLACK)
+
         pg.transform.scale(canvas, (SCREEN_HALF_WIDTH, SCREEN_HEIGHT), scaled_canvas)
         screen.blit(scaled_canvas, (SCREEN_HALF_WIDTH, 0))
+
         pg.display.flip()
 
     pg.quit()
