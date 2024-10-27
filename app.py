@@ -68,6 +68,10 @@ def main():
     scaled_canvas = pg.surface.Surface((SCREEN_HALF_WIDTH, SCREEN_HEIGHT))
     canvas.fill(WHITE)
 
+    font = pg.font.Font(None, 42)
+    text_predicting = font.render('Predicting...', True, WHITE)
+    text_result = font.render('You draw', True, WHITE)
+
     prediction_state = PREDICTION_NO_STATE
 
     running = True
@@ -116,6 +120,17 @@ def main():
 
         pg.transform.scale(canvas, (SCREEN_HALF_WIDTH, SCREEN_HEIGHT), scaled_canvas)
         screen.blit(scaled_canvas, (SCREEN_HALF_WIDTH, 0))
+
+        if prediction_state == PREDICTION_STARTED:
+            text_rect = text_predicting.get_rect()
+            text_rect.center = (SCREEN_HALF_WIDTH // 2, SCREEN_HALF_HEIGHT)
+            screen.blit(text_predicting, text_rect)
+
+        if prediction_state == PREDICTION_DONE:
+            text_rect = text_result.get_rect()
+            text_rect.center = (SCREEN_HALF_WIDTH // 2, 0)
+            text_rect.y = 10
+            screen.blit(text_result, text_rect)
 
         pg.display.flip()
 
