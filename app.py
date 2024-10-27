@@ -91,6 +91,11 @@ def main():
                     print(knn.predict([preprocess_canvas(canvas)])[0])
                     canvas.fill(WHITE)
 
+            if event.type == pg.KEYUP:
+                if event.key == pg.K_RETURN:
+                    print(knn.predict([preprocess_canvas(canvas)])[0])
+                    canvas.fill(WHITE)
+
 
         # Draw section
         screen.fill(BLACK)
