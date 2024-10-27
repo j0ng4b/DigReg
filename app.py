@@ -44,6 +44,8 @@ def preprocess_canvas(canvas):
     array = np.dot(pixel_array[..., :3], [0.2989, 0.5870, 0.1140]).astype(np.uint8)
     array = 254 - array
     array = array.astype(np.float64) / 255.0
+    array = np.flip(array, axis=0)
+    array = np.rot90(array, k=-1)
     array = array.flatten()
 
     return array
