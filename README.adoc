@@ -1,0 +1,40 @@
+= DigReg
+:toc:
+:toclevels: 4
+
+== Sobre
+[.lead]
+**DigReg** é um reconhecedor de digitos que utiliza o algoritmo K Nearest Neighbors (KNN). {empty} +
+Para fazer o reconhecimento é utilizado o dataset **MNIST**.
+
+== Como executar?
+
+Para executar é necessário conhecimento básico de python.
+{empty} +
+Abaixo os passos para executar o projeto:
+
+=== Instalar dependências
+
+Para instalar as dependências é bem simples, basta executar o seguinte comando no terminal:
+
+    pip install -r requirements.txt
+
+Após o comando finalizar todas as dependências terão sido instaladas.
+
+=== Executar o projeto
+Feito todo o processo anterior chegou a parte mais simples, execute no terminal o seguinte comando:
+
+    python app.py
+
+Dependento do sistema operacional os comandos podem ter variações, por exemplo, no Windows pode ser  
+necessário trocar `python` por `py.exe`.
+
+Após a execução do comando é aberto uma janela.
+
+== O que fazer?
+
+Após ser aberta a janela de execução na quadro branco da aplicação é possível desenhar um número de 0 a 9 {empty} +
+para que seja feita a predição pela aplicação.
+
+Para iniciar o processo de predição em qualquer canto da tela clique com o botão direito do mouse ou aperte a tecla
+Enter.
