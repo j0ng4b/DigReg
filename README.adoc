@@ -33,7 +33,7 @@ Após a execução do comando é aberto uma janela.
 
 == O que fazer?
 
-Após ser aberta a janela de execução na quadro branco da aplicação é possível desenhar um número de 0 a 9 {empty} +
+Após ser aberta a janela de execução na quadro branco da aplicação é possível desenhar um número de `0` a `9` {empty} +
 para que seja feita a predição pela aplicação.
 
 Para iniciar o processo de predição em qualquer canto da tela clique com o botão direito do mouse ou aperte a tecla
